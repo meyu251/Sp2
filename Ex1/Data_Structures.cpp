@@ -12,8 +12,8 @@ DynamicArray<T>::DynamicArray(){
 }
 
 template <typename T>
-DynamicArray<T>::DynamicArray(int capacity) {
-    if (capacity <= 0) {
+DynamicArray<T>::DynamicArray(int capacity){
+    if(capacity <= 0){
         throw std::invalid_argument("Capacity must be greater than 0");
     }
     this->capacity = capacity;
@@ -22,13 +22,13 @@ DynamicArray<T>::DynamicArray(int capacity) {
 }
 
 template <typename T>
-DynamicArray<T>::~DynamicArray() {
+DynamicArray<T>::~DynamicArray(){
     delete[] data;
 }
 
 template <typename T>
-void DynamicArray<T>::resize(int newCapacity) {
-    if (newCapacity <= 0) {
+void DynamicArray<T>::resize(int newCapacity){
+    if(newCapacity <= 0){
         throw std::invalid_argument("New capacity must be greater than 0");
     }
     T* newData = new T[newCapacity];
@@ -39,39 +39,39 @@ void DynamicArray<T>::resize(int newCapacity) {
 }
 
 template <typename T>
-void DynamicArray<T>::push_back(const T& value) {
-    if (size == capacity) {
+void DynamicArray<T>::push_back(const T& value){
+    if(size == capacity){
         resize(capacity * 2);
     }
     data[size++] = value;
 }
 
 template <typename T>
-void DynamicArray<T>::removeAt(int index) {
-    if (index < 0 || index >= size) {
+void DynamicArray<T>::removeAt(int index){
+    if(index < 0 || index >= size){
         throw std::out_of_range("Index out of range");
     }
-    for (int i = index; i < size - 1; i++) {
+    for(int i = index; i < size - 1; i++){
         data[i] = data[i + 1];
     }
     size--;
 }
 
 template <typename T>
-T& DynamicArray<T>::get(int index) {
-    if (index < 0 || index >= size) {
+T& DynamicArray<T>::get(int index){
+    if(index < 0 || index >= size){
         throw std::out_of_range("Index out of range");
     }
     return data[index];
 }
 
 template <typename T>
-int DynamicArray<T>::getSize() const {
+int DynamicArray<T>::getSize() const{
     return size;
 }
 
 template <typename T>
-bool DynamicArray<T>::isEmpty() const {
+bool DynamicArray<T>::isEmpty() const{
     return size == 0;
 }
 
