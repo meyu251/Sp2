@@ -23,6 +23,7 @@ namespace graph {
         void removeAt(int index);
         T& get(int index);
         int getSize() const;
+        bool isEmpty() const;
     };
 
     template <typename T1, typename T2>

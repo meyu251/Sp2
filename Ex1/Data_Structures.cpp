@@ -70,6 +70,11 @@ int DynamicArray<T>::getSize() const {
     return size;
 }
 
+template <typename T>
+bool DynamicArray<T>::isEmpty() const {
+    return size == 0;
+}
+
 }  // namespace graph
 
 template class graph::DynamicArray<int>;
