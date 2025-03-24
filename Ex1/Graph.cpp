@@ -5,7 +5,7 @@ namespace graph {
 
 Graph::Graph(int n){
     adjList = new DynamicArray<Pair<int, int>>[n];  // first = neighbore, second = weight
-    int numOfVertices = n;
+    this->numOfVertices = n;
 }
 
 Graph::~Graph(){
@@ -40,7 +40,6 @@ Remove an undirected edge between src and dest
 void Graph::removeEdge(int src, int dest){
     if(!hasEdge(src, dest)){
         throw std::invalid_argument("Edge does not exist.");
-        return;
     }
 
     for(int i = 0; i < adjList[src - 1].getSize(); i++){
@@ -68,6 +67,11 @@ Print the graph in the following format:
 */
 void Graph::printGraph(){
     for(int i = 0; i < numOfVertices; i++){
+        if(adjList[i].isEmpty()){
+            std::cout << "Vertex " << i+1 << " has no neighbors." << std::endl;
+            continue;
+        }
+
         for(int j = 0; j < adjList[i].getSize(); j++){
             std::cout << "{" << i+1 << "," << adjList[i].get(j).first << " (" << adjList[i].get(j).second << ")}";
             if(j != adjList[i].getSize() - 1){
