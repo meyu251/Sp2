@@ -4,6 +4,9 @@
 
 namespace graph {
 
+//////////////////////////////////////////
+// DynamicArray
+//////////////////////////////////////////    
 template <typename T>
 DynamicArray<T>::DynamicArray(){
     capacity = 2;
@@ -73,6 +76,28 @@ int DynamicArray<T>::getSize() const{
 template <typename T>
 bool DynamicArray<T>::isEmpty() const{
     return size == 0;
+}
+
+
+//////////////////////////////////////////
+// Pair
+//////////////////////////////////////////
+template <typename T1, typename T2>
+Pair<T1, T2>::Pair(T1 first, T2 second){
+    this->first = first;
+    this->second = second;
+}
+
+
+//////////////////////////////////////////
+// Queue
+//////////////////////////////////////////
+template <typename T>
+Queue<T>::Queue(){
+    DynamicArray<T> data = DynamicArray<T>();
+    head = 0;
+    tail = 0;
+    size = 0;
 }
 
 }  // namespace graph

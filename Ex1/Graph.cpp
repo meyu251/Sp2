@@ -8,8 +8,22 @@ Graph::Graph(int n){
     this->numOfVertices = n;
 }
 
+Graph::Graph(Graph& g){
+    this->numOfVertices = g.numOfVertices;
+    adjList = new DynamicArray<Pair<int, int>>[numOfVertices];
+    for(int i = 0; i < numOfVertices; i++){
+        for(int j = 0; j < g.adjList[i].getSize(); j++){
+            adjList[i].push_back(g.adjList[i].get(j));
+        }
+    }
+}
+
 Graph::~Graph(){
     delete[] adjList;
+}
+
+int Graph::getNumOfVertices(){
+    return numOfVertices;
 }
 
 void Graph::addEdge(int src, int dest, int weight){
@@ -64,6 +78,8 @@ Print the graph in the following format:
 .
 .
 {vertexN, neighbor (weight)}, {vertexN, neighbor (weight)}, ..
+
+if there are no edeges for a vertex, print "Vertex i has no neighbors."
 */
 void Graph::printGraph(){
     for(int i = 0; i < numOfVertices; i++){

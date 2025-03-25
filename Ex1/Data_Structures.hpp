@@ -3,7 +3,8 @@
 #include <stdexcept>
 
 namespace graph {
-
+    
+    //////////////////////////////////////////
     template <typename T>
     class DynamicArray {
     private:
@@ -26,17 +27,29 @@ namespace graph {
         bool isEmpty() const;
     };
 
+
+    //////////////////////////////////////////
     template <typename T1, typename T2>
-    class Pair{
-        public:
+    class Pair{   
+    public:
         T1 first;
         T2 second;
 
         Pair(){};
-        Pair(T1 first, T2 second){
-            this->first = first;
-            this->second = second;
-        }
+        Pair(T1 first, T2 second);
+    };
+
+    //////////////////////////////////////////
+    template <typename T>
+    class Queue {
+    private:
+        DynamicArray<T> data;
+        int head;
+        int tail;
+        int size;
+        
+    public:
+        Queue();
     };
 
 }  // namespace graph

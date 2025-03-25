@@ -15,8 +15,10 @@ namespace graph {
     public:
         
         Graph(int n);
+        Graph(Graph& g);    // copy constructor
         ~Graph();
 
+        int getNumOfVertices();
         void addEdge(int src, int dest, int weight);
         void addEdge(int src, int dest);
         bool hasEdge(int src, int dest);
