@@ -94,13 +94,58 @@ Pair<T1, T2>::Pair(T1 first, T2 second){
 //////////////////////////////////////////
 template <typename T>
 Queue<T>::Queue(){
-    DynamicArray<T> data = DynamicArray<T>();
     head = 0;
     tail = 0;
     size = 0;
 }
 
+template <typename T>
+Queue<T>::~Queue(){}
+
+template <typename T>
+void Queue<T>::enqueue(const T& value){
+    if(size == data.getSize()){
+        data.push_back(value);
+    }
+    else{
+        data.get(tail) = value;
+    }
+    tail = (tail + 1) % data.getSize();
+    size++;
+}
+
+template <typename T>
+T Queue<T>::dequeue(){
+    if(data.isEmpty()){
+        throw std::out_of_range("Queue is empty");
+    }
+    T value = data.get(head);
+    head = (head + 1) % data.getSize();
+    size--;
+    return value;
+}
+
+template <typename T>
+T Queue<T>::peek(){
+    if(data.isEmpty()){
+        throw std::out_of_range("Queue is empty");
+    }
+    return data.get(head);
+}
+
+template <typename T>
+int Queue<T>::getSize() const{
+    return size;
+}
+
+template <typename T>
+bool Queue<T>::isEmpty() const{
+    return size == 0;
+}
+
 }  // namespace graph
 
+template class graph::Pair<int, int>;
 template class graph::DynamicArray<int>;
 template class graph::DynamicArray<graph::Pair<int, int>>;
+template class graph::Queue<int>;

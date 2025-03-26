@@ -50,6 +50,14 @@ namespace graph {
         
     public:
         Queue();
+        ~Queue();
+
+        void enqueue(const T& value);
+        T dequeue();
+        T peek();
+        int getSize() const;
+        bool isEmpty() const;
+        
     };
 
 }  // namespace graph
