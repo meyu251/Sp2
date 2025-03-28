@@ -25,7 +25,8 @@ namespace graph {
         T& get(int index);
         int getSize() const;
         bool isEmpty() const;
-    };
+        T& operator[](int index);
+    };  // class DynamicArray
 
 
     //////////////////////////////////////////
@@ -37,7 +38,7 @@ namespace graph {
 
         Pair(){};
         Pair(T1 first, T2 second);
-    };
+    };  // class Pair
 
     //////////////////////////////////////////
     template <typename T>
@@ -58,6 +59,25 @@ namespace graph {
         int getSize() const;
         bool isEmpty() const;
         
-    };
+    };  // class Queue
+
+    //////////////////////////////////////////
+    template <typename T>
+    class Stack {
+    private:
+        DynamicArray<T> data;
+        int top;
+        int size;
+
+    public:
+        Stack();
+        ~Stack();
+
+        void push(const T& value);
+        T pop();
+        T peek();
+        int getSize() const;
+        bool isEmpty() const;
+    };  // class Stack
 
 }  // namespace graph

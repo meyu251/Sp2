@@ -100,4 +100,8 @@ void Graph::printGraph(){
     }
 }
 
+DynamicArray<Pair<int, int>> Graph::getNeighbors(int vertex){
+    return adjList[vertex - 1];
+}
+
 }  // namespace graph

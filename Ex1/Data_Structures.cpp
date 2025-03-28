@@ -78,6 +78,14 @@ bool DynamicArray<T>::isEmpty() const{
     return size == 0;
 }
 
+template <typename T>
+T& DynamicArray<T>::operator[](int index){
+    if(index < 0 || index >= size){
+        throw std::out_of_range("Index out of range");
+    }
+    return data[index];
+}
+
 
 //////////////////////////////////////////
 // Pair
@@ -108,7 +116,7 @@ void Queue<T>::enqueue(const T& value){
         data.push_back(value);
     }
     else{
-        data.get(tail) = value;
+        data[tail] = value;
     }
     tail = (tail + 1) % data.getSize();
     size++;
@@ -116,10 +124,10 @@ void Queue<T>::enqueue(const T& value){
 
 template <typename T>
 T Queue<T>::dequeue(){
-    if(data.isEmpty()){
+    if(size == 0){
         throw std::out_of_range("Queue is empty");
     }
-    T value = data.get(head);
+    T value = data[head];
     head = (head + 1) % data.getSize();
     size--;
     return value;
@@ -127,10 +135,10 @@ T Queue<T>::dequeue(){
 
 template <typename T>
 T Queue<T>::peek(){
-    if(data.isEmpty()){
+    if(size == 0){
         throw std::out_of_range("Queue is empty");
     }
-    return data.get(head);
+    return data[head];
 }
 
 template <typename T>
@@ -143,9 +151,61 @@ bool Queue<T>::isEmpty() const{
     return size == 0;
 }
 
+//////////////////////////////////////////
+// Stack
+//////////////////////////////////////////
+template <typename T>
+Stack<T>::Stack(){
+    top = -1;
+    size = 0;
+}
+
+template <typename T>
+Stack<T>::~Stack(){}
+
+template <typename T>
+void Stack<T>::push(const T& value){
+    if(size == data.getSize()){
+        data.push_back(value);
+    }
+    else{
+        data[size] = value;
+    }
+    top++;
+    size++;
+}
+
+template <typename T>
+T Stack<T>::pop(){
+    if(size == 0){
+        throw std::out_of_range("Stack is empty");
+    }
+    size--;
+    return data[top--];
+}
+
+template <typename T>
+T Stack<T>::peek(){
+    if(size == 0){
+        throw std::out_of_range("Stack is empty");
+    }
+    return data[top];
+}
+
+template <typename T>
+int Stack<T>::getSize() const{
+    return size;
+}
+
+template <typename T>
+bool Stack<T>::isEmpty() const{
+    return size == 0;
+}
+
 }  // namespace graph
 
 template class graph::Pair<int, int>;
 template class graph::DynamicArray<int>;
+template class graph::DynamicArray<bool>;
 template class graph::DynamicArray<graph::Pair<int, int>>;
 template class graph::Queue<int>;

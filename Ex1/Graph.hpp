@@ -24,6 +24,7 @@ namespace graph {
         bool hasEdge(int src, int dest);
         void removeEdge(int src, int dest);
         void printGraph();
+        DynamicArray<Pair<int, int>> getNeighbors(int vertex);
         
 
     };
