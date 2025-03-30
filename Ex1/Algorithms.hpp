@@ -1,7 +1,11 @@
+/*
+author: Meir Yust
+mail: meyu251@gmail.com
+*/
+
 #pragma once
 
 #include <iostream>
-#include "Data_Structures.hpp"
 #include "Graph.hpp"
 
 namespace graph{

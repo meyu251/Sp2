@@ -1,3 +1,8 @@
+/*
+author: Meir Yust
+mail: meyu251@gmail.com
+*/
+
 #pragma once
 
 #include <stdexcept>
@@ -81,3 +86,9 @@ namespace graph {
     };  // class Stack
 
 }  // namespace graph
+
+template class graph::Pair<int, int>;
+template class graph::DynamicArray<int>;
+template class graph::DynamicArray<bool>;
+template class graph::DynamicArray<graph::Pair<int, int>>;
+template class graph::Queue<int>;

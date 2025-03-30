@@ -1,5 +1,9 @@
+/*
+author: Meir Yust
+mail: meyu251@gmail.com
+*/
+
 #include <iostream>
-#include "Data_Structures.hpp"
 #include "Graph.hpp"
 #include "Algorithms.hpp"
 
@@ -48,7 +52,7 @@ Graph dfs(Graph& g, int root){
         bool allVisited = true;
         for(int i = 0; i < neighbors.getSize(); i++){
             int neighbor = neighbors[i].first;
-            if(visited[neighbor - 1] == 0){ // only if not visited at all
+            if(visited[neighbor - 1] == 0){     // only if not visited at all
                 s.push(neighbor);
                 visited[neighbor - 1] = 1;
                 ans.addEdge(current, neighbor, neighbors[i].second);    // add also the original weight of this edge
@@ -56,7 +60,7 @@ Graph dfs(Graph& g, int root){
                 break;
             }
         }
-        if(allVisited){ // all neighbors are visited so we can finish this vertex
+        if(allVisited){     // all neighbors are visited so we can finish this vertex
             visited[current - 1] = 2;
             s.pop();
         }

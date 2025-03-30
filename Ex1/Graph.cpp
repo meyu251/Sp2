@@ -1,13 +1,20 @@
-#include "Graph.hpp"
-#include <iostream>
+/*
+author: Meir Yust
+mail: meyu251@gmail.com
+*/
 
-namespace graph {
+#include <iostream>
+#include "Graph.hpp"
+#include "Data_Structures.hpp"
+
+using namespace graph;
 
 Graph::Graph(int n){
     adjList = new DynamicArray<Pair<int, int>>[n];  // first = neighbore, second = weight
     this->numOfVertices = n;
 }
 
+// copy constructor
 Graph::Graph(Graph& g){
     this->numOfVertices = g.numOfVertices;
     adjList = new DynamicArray<Pair<int, int>>[numOfVertices];
@@ -26,13 +33,16 @@ int Graph::getNumOfVertices(){
     return numOfVertices;
 }
 
+/*
+Add an undirected edge between src and dest
+*/
 void Graph::addEdge(int src, int dest, int weight){
     adjList[src - 1].push_back({dest, weight});
     adjList[dest - 1].push_back({src, weight});
 }
 
 /*
-Add an undirected edge between src and dest
+Add an undirected edge between src and dest with weight 1
 */
 void Graph::addEdge(int src, int dest){
     adjList[src - 1].push_back({dest, 1});
@@ -49,7 +59,7 @@ bool Graph::hasEdge(int src, int dest){
 }
 
 /*
-Remove an undirected edge between src and dest
+Remove an edge between src and dest
 */
 void Graph::removeEdge(int src, int dest){
     if(!hasEdge(src, dest)){
@@ -62,12 +72,14 @@ void Graph::removeEdge(int src, int dest){
             break;
         }
     }
-    for(int i = 0; i < adjList[dest - 1].getSize(); i++){
-        if(adjList[dest - 1].get(i).first == src){
-            adjList[dest - 1].removeAt(i);
-            break;
-        }
-    }
+    // remove the edge from dest to src
+
+    // for(int i = 0; i < adjList[dest - 1].getSize(); i++){
+    //     if(adjList[dest - 1].get(i).first == src){
+    //         adjList[dest - 1].removeAt(i);
+    //         break;
+    //     }
+    // }
 }
 
 /*
@@ -103,5 +115,3 @@ void Graph::printGraph(){
 DynamicArray<Pair<int, int>> Graph::getNeighbors(int vertex){
     return adjList[vertex - 1];
 }
-
-}  // namespace graph

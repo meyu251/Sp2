@@ -1,3 +1,8 @@
+/*
+author: Meir Yust
+mail: meyu251@gmail.com
+*/
+
 #pragma once
 
 #include <iostream>
@@ -5,11 +10,11 @@
 
 namespace graph {
 
-    class Graph {
+    class Graph{
     private:
         // becouse the vertex numbered from 1 to n
-        // the array at index i represents the adjacency list of vertex (i+1)
-        DynamicArray<Pair<int, int>>* adjList;  // first = vertex, second = list of pairs (neighbor, weight)
+        // the list at index i represents the adjacency list of vertex (i+1)
+        DynamicArray<Pair<int, int>>* adjList;  // list of pairs (neighbor, weight)
         int numOfVertices;
 
     public:
@@ -25,8 +30,7 @@ namespace graph {
         void removeEdge(int src, int dest);
         void printGraph();
         DynamicArray<Pair<int, int>> getNeighbors(int vertex);
-        
-
-    };
+    
+    };  // class Graph
 
 }  // namespace graph
