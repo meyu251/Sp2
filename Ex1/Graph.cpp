@@ -35,18 +35,88 @@ int Graph::getNumOfVertices(){
 
 /*
 Add an undirected edge between src and dest
+-if the edge already exists, throw an exception
+-if the edge exist only in one direction, add it in the other direction
+-if the edge does not exist, add it in both directions
 */
 void Graph::addEdge(int src, int dest, int weight){
-    adjList[src - 1].push_back({dest, weight});
-    adjList[dest - 1].push_back({src, weight});
+    if(src < 1 || src > numOfVertices || dest < 1 || dest > numOfVertices){
+        throw std::invalid_argument("Invalid edge.");
+    }
+
+    // check if any of the edges already exists
+    bool srcEdge = false;
+    bool destEdge = false;
+    for(int i = 0; i < adjList[src - 1].getSize(); i++){
+        if(adjList[src - 1].get(i).first == dest){
+            srcEdge = true;
+            break;
+        }
+    }
+    for(int i = 0; i < adjList[dest - 1].getSize(); i++){
+        if(adjList[dest - 1].get(i).first == src){
+            destEdge = true;
+            break;
+        }
+    }
+
+    if(srcEdge && destEdge){
+        throw std::invalid_argument("Edge already exists.");
+    }
+    else if(srcEdge){
+        std::cout << "Edge from " << src << " to " << dest << " already exists." << std::endl;
+        adjList[dest - 1].push_back({src, weight});
+    }
+    else if(destEdge){
+        std::cout << "Edge from " << dest << " to " << src << " already exists." << std::endl;
+        adjList[src - 1].push_back({dest, weight});
+    }
+    else{
+        adjList[src - 1].push_back({dest, weight});
+        adjList[dest - 1].push_back({src, weight});
+    }
 }
 
 /*
 Add an undirected edge between src and dest with weight 1
+- act as the function above
 */
 void Graph::addEdge(int src, int dest){
-    adjList[src - 1].push_back({dest, 1});
-    adjList[dest - 1].push_back({src, 1});
+    if(src < 1 || src > numOfVertices || dest < 1 || dest > numOfVertices){
+        throw std::invalid_argument("Invalid edge.");
+    }
+
+    // Check if any of the edges already exists
+    bool srcEdge = false;
+    bool destEdge = false;
+    for(int i = 0; i < adjList[src - 1].getSize(); i++){
+        if(adjList[src - 1].get(i).first == dest){
+            srcEdge = true;
+            break;
+        }
+    }
+    for(int i = 0; i < adjList[dest - 1].getSize(); i++){
+        if(adjList[dest - 1].get(i).first == src){
+            destEdge = true;
+            break;
+        }
+    }
+
+    if(srcEdge && destEdge){
+        throw std::invalid_argument("Edge already exists.");
+    }
+    else if(srcEdge){
+        std::cout << "Edge from " << src << " to " << dest << " already exists." << std::endl;
+        adjList[dest - 1].push_back({src, 1});
+    }
+    else if(destEdge){
+        std::cout << "Edge from " << dest << " to " << src << " already exists." << std::endl;
+        adjList[src - 1].push_back({dest, 1});
+    }
+    else{
+        adjList[src - 1].push_back({dest, 1});
+        adjList[dest - 1].push_back({src, 1});
+    }
 }
 
 bool Graph::hasEdge(int src, int dest){
