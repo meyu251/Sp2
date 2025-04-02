@@ -101,6 +101,11 @@ Pair<T1, T2>::Pair(T1 first, T2 second){
     this->second = second;
 }
 
+template <typename T1, typename T2>
+bool Pair<T1, T2>::operator<(const Pair<T1, T2>& other) const{
+    return this->second < other.second;
+}
+
 
 //////////////////////////////////////////
 // Queue
@@ -205,6 +210,91 @@ int Stack<T>::getSize() const{
 template <typename T>
 bool Stack<T>::isEmpty() const{
     return size == 0;
+}
+
+//////////////////////////////////////////
+// PriorityQueue
+//////////////////////////////////////////
+template <typename T>
+PriorityQueue<T>::PriorityQueue(){
+    size = 0;
+}
+
+template <typename T>
+PriorityQueue<T>::~PriorityQueue(){}
+
+template <typename T>
+void PriorityQueue<T>::enqueue(const T& value){
+    data.push_back(value);
+    size++;
+    heapifyUp(size - 1);
+}
+
+template <typename T>
+T PriorityQueue<T>::dequeue(){
+    if(size == 0){
+        throw std::out_of_range("PriorityQueue is empty");
+    }
+    T value = data[0];
+    data[0] = data[size - 1];
+    size--;
+    heapifyDown(0);
+    return value;
+}
+
+template <typename T>
+T PriorityQueue<T>::peek(){
+    if(size == 0){
+        throw std::out_of_range("PriorityQueue is empty");
+    }
+    return data[0];
+}
+
+template <typename T>
+int PriorityQueue<T>::getSize() const{
+    return size;
+}
+
+template <typename T>
+bool PriorityQueue<T>::isEmpty() const{
+    return size == 0;
+}
+
+template <typename T>
+void PriorityQueue<T>::heapifyUp(int index){
+    while(index > 0){
+        int parentIndex = (index - 1) / 2;
+        if(data[index] < data[parentIndex]){
+            std::swap(data[index], data[parentIndex]);
+            index = parentIndex;
+        }
+        else{
+            break;
+        }
+    }
+}
+
+template <typename T>
+void PriorityQueue<T>::heapifyDown(int index){
+    while(index < size){
+        int leftChildIndex = 2 * index + 1;
+        int rightChildIndex = 2 * index + 2;
+        int smallestIndex = index;
+
+        if(leftChildIndex < size && data[leftChildIndex] < data[smallestIndex]){
+            smallestIndex = leftChildIndex;
+        }
+        if(rightChildIndex < size && data[rightChildIndex] < data[smallestIndex]){
+            smallestIndex = rightChildIndex;
+        }
+        if(smallestIndex != index){
+            std::swap(data[index], data[smallestIndex]);
+            index = smallestIndex;
+        }
+        else{
+            break;
+        }
+    }
 }
 
 }  // namespace graph

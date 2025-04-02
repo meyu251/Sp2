@@ -40,7 +40,7 @@ Add an undirected edge between src and dest
 -if the edge does not exist, add it in both directions
 */
 void Graph::addEdge(int src, int dest, int weight){
-    if(src < 1 || src > numOfVertices || dest < 1 || dest > numOfVertices){
+    if(src < 1 || src > numOfVertices || dest < 1 || dest > numOfVertices || src == dest){
         throw std::invalid_argument("Invalid edge.");
     }
 
@@ -82,7 +82,7 @@ Add an undirected edge between src and dest with weight 1
 - act as the function above
 */
 void Graph::addEdge(int src, int dest){
-    if(src < 1 || src > numOfVertices || dest < 1 || dest > numOfVertices){
+    if(src < 1 || src > numOfVertices || dest < 1 || dest > numOfVertices || src == dest){
         throw std::invalid_argument("Invalid edge.");
     }
 
