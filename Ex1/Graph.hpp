@@ -20,16 +20,19 @@ namespace graph {
     public:
         
         Graph(int n);
-        Graph(Graph& g);    // copy constructor
+        Graph(const Graph& g);    // copy constructor
         ~Graph();
 
         int getNumOfVertices();
         void addEdge(int src, int dest, int weight);
         void addEdge(int src, int dest);
+        void addDirectedEdge(int src, int dest, int weight);
+        void addDirectedEdge(int src, int dest);
         bool hasEdge(int src, int dest);
         void removeEdge(int src, int dest);
         void printGraph();
         DynamicArray<Pair<int, int>> getNeighbors(int vertex);
+        bool hasNegativeEdge();
     
     };  // class Graph
 

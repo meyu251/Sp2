@@ -13,7 +13,7 @@ namespace graph{
     Graph bfs(Graph& g, int startVertex);
     Graph dfs(Graph& g, int startVertex);
     Graph dijkstra(Graph& g, int startVertex);
-
+    Graph prim(Graph& g);
 
 
 }

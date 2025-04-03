@@ -15,7 +15,7 @@ Graph::Graph(int n){
 }
 
 // copy constructor
-Graph::Graph(Graph& g){
+Graph::Graph(const Graph& g){
     this->numOfVertices = g.numOfVertices;
     adjList = new DynamicArray<Pair<int, int>>[numOfVertices];
     for(int i = 0; i < numOfVertices; i++){
@@ -35,6 +35,7 @@ int Graph::getNumOfVertices(){
 
 /*
 Add an undirected edge between src and dest
+-does not support an edge from a vertex to itself
 -if the edge already exists, throw an exception
 -if the edge exist only in one direction, add it in the other direction
 -if the edge does not exist, add it in both directions
@@ -119,6 +120,36 @@ void Graph::addEdge(int src, int dest){
     }
 }
 
+void Graph::addDirectedEdge(int src, int dest, int weight){
+    if(src < 1 || src > numOfVertices || dest < 1 || dest > numOfVertices || src == dest){
+        throw std::invalid_argument("Invalid edge.");
+    }
+
+    // check if the edge already exists
+    for(int i = 0; i < adjList[src - 1].getSize(); i++){
+        if(adjList[src - 1].get(i).first == dest){
+            throw std::invalid_argument("Edge already exists.");
+        }
+    }
+
+    adjList[src - 1].push_back({dest, weight});
+}
+
+void Graph::addDirectedEdge(int src, int dest){
+    if(src < 1 || src > numOfVertices || dest < 1 || dest > numOfVertices || src == dest){
+        throw std::invalid_argument("Invalid edge.");
+    }
+
+    // check if the edge already exists
+    for(int i = 0; i < adjList[src - 1].getSize(); i++){
+        if(adjList[src - 1].get(i).first == dest){
+            throw std::invalid_argument("Edge already exists.");
+        }
+    }
+
+    adjList[src - 1].push_back({dest, 1});
+}
+
 bool Graph::hasEdge(int src, int dest){
     for(int i = 0; i < adjList[src - 1].getSize(); i++){
         if(adjList[src - 1].get(i).first == dest){
@@ -129,7 +160,7 @@ bool Graph::hasEdge(int src, int dest){
 }
 
 /*
-Remove an edge between src and dest
+Remove a directed edge between src and dest
 */
 void Graph::removeEdge(int src, int dest){
     if(!hasEdge(src, dest)){
@@ -165,6 +196,10 @@ Print the graph in the following format:
 if there are no edeges for a vertex, print "Vertex i has no neighbors."
 */
 void Graph::printGraph(){
+    if(numOfVertices == 0){
+        throw std::invalid_argument("Graph is empty.");
+    }
+
     for(int i = 0; i < numOfVertices; i++){
         if(adjList[i].isEmpty()){
             std::cout << "Vertex " << i+1 << " has no neighbors." << std::endl;
@@ -185,4 +220,16 @@ void Graph::printGraph(){
 
 DynamicArray<Pair<int, int>> Graph::getNeighbors(int vertex){
     return adjList[vertex - 1];
+}
+
+bool Graph::hasNegativeEdge(){
+    for(int i = 0; i < numOfVertices; i++){
+        DynamicArray<Pair<int, int>> neighbors = getNeighbors(i + 1);
+        for(int j = 0; j < neighbors.getSize(); j++){
+            if(neighbors[j].second < 0){
+                return true;
+            }
+        }
+    }
+    return false;
 }
