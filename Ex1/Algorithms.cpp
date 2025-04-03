@@ -74,12 +74,15 @@ Graph dijkstra(Graph& g, int startVertex){
     Graph ans(g.getNumOfVertices());
     DynamicArray<int> dist(g.getNumOfVertices());
     DynamicArray<bool> visited(g.getNumOfVertices());
+    DynamicArray<int> parents(g.getNumOfVertices());
     for(int i = 0; i < dist.getSize(); i++){
         dist[i] = INT_MAX;
         visited[i] = false;
+        parents[i] = -1;   // -1 means no parent
     }
+
     dist[startVertex - 1] = 0;   // the -1 is becouse the vertex numbered from 1 to n and the array from 0 to n-1
-    PriorityQueue<Pair<int, int>> pq;
+    PriorityQueue<Pair<int, int>> pq;   // the first is the vertex and the second is the distance
     pq.enqueue({startVertex, 0});
 
     while(!pq.isEmpty()){
@@ -94,8 +97,23 @@ Graph dijkstra(Graph& g, int startVertex){
             int weight = neighbors[i].second;
             if(!visited[neighbor - 1] && dist[currentVertex - 1] + weight < dist[neighbor - 1]){
                 dist[neighbor - 1] = dist[currentVertex - 1] + weight;
-                ans.addEdge(currentVertex, neighbor, weight);    // add also the original weight of this edge
+                parents[neighbor - 1] = currentVertex;   // set the parent of the neighbor
                 pq.enqueue({neighbor, dist[neighbor - 1]});
+            }
+        }
+    }
+
+    // build the ans graph
+    for(int i = 0; i < parents.getSize(); i++){
+        if(parents[i] != -1){   // if there is a parent
+            int vertex = i + 1;
+            int parent = parents[i];
+            DynamicArray<Pair<int, int>> neighbors = g.getNeighbors(parent);
+            for(int j = 0; j < neighbors.getSize(); j++){
+                if(neighbors[j].first == vertex){   // find the weight of the edge
+                    ans.addEdge(parent, vertex, neighbors[j].second);
+                    break;
+                }
             }
         }
     }

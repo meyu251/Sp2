@@ -142,6 +142,7 @@ void Graph::removeEdge(int src, int dest){
             break;
         }
     }
+    
     // remove the edge from dest to src
 
     // for(int i = 0; i < adjList[dest - 1].getSize(); i++){
