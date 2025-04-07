@@ -19,8 +19,8 @@ using namespace std;
 // Helper function to capture cout output
 class CoutRedirect{
 public:
-    CoutRedirect(std::stringstream& buffer) : old_buf(std::cout.rdbuf(buffer.rdbuf())) {}
-    ~CoutRedirect() { std::cout.rdbuf(old_buf); }
+    CoutRedirect(std::stringstream& buffer) : old_buf(std::cout.rdbuf(buffer.rdbuf())){}
+    ~CoutRedirect() {std::cout.rdbuf(old_buf);}
 private:
     std::streambuf* old_buf;
 };
@@ -94,3 +94,56 @@ TEST_CASE("DynamicArray tests"){
         CHECK_THROWS_AS(arr.removeAt(1), std::out_of_range);
     }
 }
+
+TEST_CASE("Queue tests"){
+    SUBCASE("Empty queue"){
+        Queue<int> q;
+        CHECK(q.getSize() == 0);
+        CHECK(q.isEmpty() == true);
+        CHECK_THROWS_AS(q.dequeue(), std::out_of_range);
+        CHECK_THROWS_AS(q.peek(), std::out_of_range);
+    }
+
+    SUBCASE("Enqueue and dequeue"){
+        Queue<int> q;
+        q.enqueue(5);
+        q.enqueue(10);
+        CHECK(q.getSize() == 2);
+        CHECK(q.isEmpty() == false);
+        CHECK(q.peek() == 5);
+        
+        int val = q.dequeue();
+        CHECK(val == 5);
+        CHECK(q.getSize() == 1);
+        CHECK(q.peek() == 10);
+        
+        val = q.dequeue();
+        CHECK(val == 10);
+        CHECK(q.getSize() == 0);
+        CHECK(q.isEmpty() == true);
+    }
+
+    SUBCASE("Multiple en/dequeue"){
+        Queue<int> q;
+        // Add and remove many elements to test circular behavior
+        for(int i = 0; i < 10; i++){
+            q.enqueue(i);
+        }
+        
+        for(int i = 0; i < 5; i++){
+            CHECK(q.dequeue() == i);
+        }
+        
+        for(int i = 10; i < 15; i++){
+            q.enqueue(i);
+        }
+        
+        // Should continue from where we left
+        for(int i = 5; i < 15; i++){
+            CHECK(q.dequeue() == i);
+        }
+        
+        CHECK(q.isEmpty() == true);
+    }
+}
+

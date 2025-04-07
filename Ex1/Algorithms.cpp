@@ -222,4 +222,100 @@ Graph prim(Graph& g){
     return mst;
 }
 
+// Helper function for quicksort
+template <typename T>
+int partition(DynamicArray<T>& arr, int low, int high){
+    T pivot = arr[high];
+    int i = low - 1;    // Index of smaller element
+    
+    for(int j = low; j < high; j++){
+        // If current element is smaller than the pivot
+        if(arr[j].second < pivot.second){
+            i++;
+            // Swap arr[i] and arr[j]
+            T temp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = temp;
+        }
+    }
+    
+    // Swap arr[i+1] and arr[high] (pivot)
+    T temp = arr[i + 1];
+    arr[i + 1] = arr[high];
+    arr[high] = temp;
+    
+    return i + 1;
+}
+
+// Recursive quicksort implementation
+template <typename T>
+void quickSort(DynamicArray<T>& arr, int low, int high){
+    if(low < high){
+        // pi is partitioning index
+        int pi = partition(arr, low, high);
+        
+        // Sort elements before and after partition
+        quickSort(arr, low, pi - 1);
+        quickSort(arr, pi + 1, high);
+    }
+}
+
+Graph kruskal(Graph& g){
+    if(g.hasNegativeEdge()){
+        throw std::invalid_argument("Kruskal's algorithm cannot handle graphs with negative edge weights.");
+    }
+
+    int numVertices = g.getNumOfVertices();
+    if(numVertices == 0){
+        throw std::invalid_argument("The graph is empty.");
+    }
+    
+    Graph mst(numVertices);
+    
+    // Create a dynamic array to store all edges as: ((src, dest), weight)
+    DynamicArray<Pair<Pair<int, int>, int>> edges;
+    
+    // Collect all edges from the graph
+    for(int i = 1; i <= numVertices; i++){
+        DynamicArray<Pair<int, int>> neighbors = g.getNeighbors(i);
+        for(int j = 0; j < neighbors.getSize(); j++){
+            int neighbor = neighbors[j].first;
+            int weight = neighbors[j].second;
+            
+            // To consider each edge only once (when i < neighbor)
+            if(i < neighbor){
+                Pair<int, int> edge(i, neighbor);
+                Pair<Pair<int, int>, int> weightedEdge(edge, weight);
+                edges.push_back(weightedEdge);
+            }
+        }
+    }
+    
+    // Sort edges by weight using quicksort
+    if(edges.getSize() > 0){
+        quickSort(edges, 0, edges.getSize() - 1);
+    }
+    
+    // Create a disjoint set
+    DisjointSet<int> ds(numVertices + 1);  // +1 because vertices are 1-indexed
+    
+    // Process edges in order of increasing weight
+    for(int i = 0; i < edges.getSize(); i++){
+        int src = edges[i].first.first;
+        int dest = edges[i].first.second;
+        int weight = edges[i].second;
+        
+        // Check if adding this edge creates a cycle
+        if(!ds.isSameSet(src, dest)){
+            // Add the edge to MST
+            mst.addDirectedEdge(src, dest, weight);
+            
+            // Union the sets
+            ds.unionSets(src, dest);
+        }
+    }
+    
+    return mst;
+}
+
 } // namespace graph

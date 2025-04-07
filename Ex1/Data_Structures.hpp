@@ -122,6 +122,25 @@ namespace graph {
         void printHeap() const;
     };
 
+    //////////////////////////////////////////
+    // DisjointSet
+    //////////////////////////////////////////
+    template <typename T>
+    class DisjointSet {
+    private:
+        DynamicArray<T> parent;
+        DynamicArray<int> rank;
+        int size;
+
+    public:
+        DisjointSet(int n);
+        ~DisjointSet();
+        T find(T x);                // Find the set that the element belongs to
+        void unionSets(T x, T y);
+        bool isSameSet(T x, T y);   // Check if two elements are in the same set
+    };  // class DisjointSet
+
+
 
 //////////////////////////////////////////
 // DynamicArray
@@ -264,16 +283,51 @@ Queue<T>::~Queue(){}
 
 template <typename T>
 void Queue<T>::enqueue(const T& value){
+    // If there's no space for the new element
     if(size == data.getSize()){
+        // Handle the empty queue case
+        if(data.getSize() == 0) {
+            // Push the value directly to the empty array
+            data.push_back(value);
+            head = 0;
+            tail = 1;
+            size = 1;
+            return; // We're done, exit the function
+        }
+        
+        // For non-empty queue that needs resizing
         int oldSize = data.getSize();
-        data.push_back(value);
-        tail = (tail + 1) % (oldSize == 0 ? 1 : oldSize);
+        
+        // Create a temporary array with double capacity
+        DynamicArray<T> temp(oldSize * 2);
+        
+        // Copy existing elements in correct order
+        for(int i = 0; i < size; i++){
+            // Use push_back to ensure size is updated properly
+            temp.push_back(data[(head + i) % oldSize]);
+        }
+        
+        // Replace old array
+        data = temp;
+        
+        // Update pointers
+        head = 0;
+        tail = size;
     }
-    else{
-        data[tail] = value;
+    
+    // Add the new value (only if we didn't already add it in the empty case)
+    if(data.getSize() > 0) {
+        // If we have capacity but reached size limit, use push_back
+        if(tail >= data.getSize()) {
+            data.push_back(value);
+        } else {
+            // Otherwise use direct access
+            data[tail] = value;
+        }
+        
         tail = (tail + 1) % data.getSize();
+        size++;
     }
-    size++;
 }
 
 template <typename T>
@@ -450,12 +504,68 @@ void PriorityQueue<T>::printHeap() const{
     }
 }
 
+//////////////////////////////////////////
+// DisjointSet
+//////////////////////////////////////////
+template <typename T>
+DisjointSet<T>::DisjointSet(int n){
+    size = n;
+    // Initialize with n elements (0 to n-1)
+    for(int i = 0; i < n; i++){
+        parent.push_back(static_cast<T>(i));  // Each element is its own parent initially
+        rank.push_back(0);    // Initial rank is 0
+    }
+}
+
+template <typename T>
+DisjointSet<T>::~DisjointSet(){}
+
+template <typename T>
+T DisjointSet<T>::find(T x){
+    if(parent[static_cast<int>(x)] != x){
+        parent[static_cast<int>(x)] = find(parent[static_cast<int>(x)]);  // Path compression
+    }
+    return parent[static_cast<int>(x)];
+}
+
+template <typename T>
+void DisjointSet<T>::unionSets(T x, T y){
+    T rootX = find(x);
+    T rootY = find(y);
+
+    if(rootX == rootY) return;  // Already in the same set
+
+    // Union by rank
+    int rootXIdx = static_cast<int>(rootX);
+    int rootYIdx = static_cast<int>(rootY);
+    
+    if(rank[rootXIdx] < rank[rootYIdx]){
+        parent[rootXIdx] = rootY;
+    }
+    else if(rank[rootXIdx] > rank[rootYIdx]){
+        parent[rootYIdx] = rootX;
+    }
+    else{
+        parent[rootYIdx] = rootX;
+        rank[rootXIdx]++;
+    }
+}
+
+template <typename T>
+bool DisjointSet<T>::isSameSet(T x, T y){
+    return find(x) == find(y);
+}
+
+
 }  // namespace graph
 
 template class graph::Pair<int, int>;
+template class graph::Pair<graph::Pair<int, int>, int>;  // For Kruskal's algorithm
 template class graph::DynamicArray<int>;
 template class graph::DynamicArray<bool>;
-template class graph::DynamicArray<graph::Pair<int, int>>;
+template class graph::DynamicArray<graph::Pair<int, int>>;  // For neighbors of a vertex
+template class graph::DynamicArray<graph::Pair<graph::Pair<int, int>, int>>;  // For edges in Kruskal
 template class graph::Queue<int>;
 template class graph::Stack<int>;
-template class graph::PriorityQueue<graph::Pair<int, int>>;
+template class graph::PriorityQueue<graph::Pair<int, int>>; // For Dijkstra's algorithm
+template class graph::DisjointSet<int>;

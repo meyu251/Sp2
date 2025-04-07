@@ -14,5 +14,6 @@ namespace graph{
     Graph dfs(Graph& g, int startVertex);
     Graph dijkstra(Graph& g, int startVertex);
     Graph prim(Graph& g);
+    Graph kruskal(Graph& g);
 
 }
