@@ -74,6 +74,7 @@ namespace graph {
         T peek();
         int getSize() const;
         bool isEmpty() const;
+        void printQueue() const;    // For debug
         
     };  // class Queue
 
@@ -119,7 +120,7 @@ namespace graph {
         const T& peek() const;
         int getSize() const;
         bool isEmpty() const;
-        void printHeap() const;
+        void printHeap() const;     // For debug
     };
 
     //////////////////////////////////////////
@@ -267,7 +268,6 @@ bool Pair<T1, T2>::operator<(const Pair<T1, T2>& other) const{
     return this->second < other.second;
 }
 
-
 //////////////////////////////////////////
 // Queue
 //////////////////////////////////////////
@@ -283,51 +283,45 @@ Queue<T>::~Queue(){}
 
 template <typename T>
 void Queue<T>::enqueue(const T& value){
-    // If there's no space for the new element
-    if(size == data.getSize()){
-        // Handle the empty queue case
-        if(data.getSize() == 0) {
-            // Push the value directly to the empty array
+    // If the queue is empty, initialize the structure
+    if(size == 0){
+        if(data.getSize() == 0){
             data.push_back(value);
-            head = 0;
-            tail = 1;
-            size = 1;
-            return; // We're done, exit the function
         }
+        else{
+            data[0] = value;
+        }
+        head = 0;
+        tail = 1;
+        size = 1;
+        return;
+    }
+    
+    // If the queue is full, expand it
+    if(size == data.getSize()){
+        DynamicArray<T> temp(data.getSize() * 2 + 1);  // Always add at least one element
         
-        // For non-empty queue that needs resizing
-        int oldSize = data.getSize();
-        
-        // Create a temporary array with double capacity
-        DynamicArray<T> temp(oldSize * 2);
-        
-        // Copy existing elements in correct order
+        // Copy all elements in the correct order
         for(int i = 0; i < size; i++){
-            // Use push_back to ensure size is updated properly
-            temp.push_back(data[(head + i) % oldSize]);
+            temp.push_back(data[(head + i) % data.getSize()]);
         }
         
-        // Replace old array
+        // Replace with the new array
         data = temp;
-        
-        // Update pointers
         head = 0;
         tail = size;
     }
     
-    // Add the new value (only if we didn't already add it in the empty case)
-    if(data.getSize() > 0) {
-        // If we have capacity but reached size limit, use push_back
-        if(tail >= data.getSize()) {
-            data.push_back(value);
-        } else {
-            // Otherwise use direct access
-            data[tail] = value;
-        }
-        
-        tail = (tail + 1) % data.getSize();
-        size++;
+    // Add the new value
+    if(tail < data.getSize()){
+        data[tail] = value;
     }
+    else{
+        data.push_back(value);
+    }
+    
+    tail = (tail + 1) % data.getSize();
+    size++;
 }
 
 template <typename T>
@@ -335,9 +329,11 @@ T Queue<T>::dequeue(){
     if(size == 0){
         throw std::out_of_range("Queue is empty");
     }
+    
     T value = data[head];
     head = (head + 1) % data.getSize();
     size--;
+    
     return value;
 }
 
@@ -357,6 +353,20 @@ int Queue<T>::getSize() const{
 template <typename T>
 bool Queue<T>::isEmpty() const{
     return size == 0;
+}
+
+template <typename T>
+void Queue<T>::printQueue() const{
+    if(size == 0){
+        std::cout << "Queue is empty" << std::endl;
+        return;
+    }
+    
+    std::cout << "Queue contents: ";
+    for(int i = 0; i < size; i++){
+        std::cout << data[(head + i) % data.getSize()] << " ";
+    }
+    std::cout << std::endl;
 }
 
 //////////////////////////////////////////

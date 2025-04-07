@@ -27,8 +27,7 @@ Graph bfs(Graph& g, int root){
     q.enqueue(root);
     visited[root - 1] = true;   // the -1 is becouse the vertex numbered from 1 to n and the array from 0 to n-1
 
-    while(!q.isEmpty()){
-        
+    while(!q.isEmpty()){       
         int current = q.dequeue();
         DynamicArray<Pair<int, int>> neighbors = g.getNeighbors(current);
         for(int i = 0; i < neighbors.getSize(); i++){
