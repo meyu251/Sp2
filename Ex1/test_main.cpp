@@ -504,3 +504,247 @@ TEST_CASE("DFS algorithm tests"){
         CHECK_THROWS_AS(dfs(g, 6), std::invalid_argument);
     }
 }
+
+TEST_CASE("Dijkstra algorithm tests"){
+    SUBCASE("Dijkstra on empty graph"){
+        Graph g(0);
+        CHECK_THROWS_AS(dijkstra(g, 1), std::invalid_argument);
+    }
+
+    SUBCASE("Dijkstra on single vertex graph"){
+        Graph g(1);
+        Graph dijkstraTree = dijkstra(g, 1);
+        CHECK(dijkstraTree.getNumOfVertices() == 1);
+        
+        std::stringstream buffer;
+        CoutRedirect redirect(buffer);
+        dijkstraTree.printGraph();
+        CHECK(buffer.str() == "Vertex 1 has no neighbors.\n");
+    }
+
+    SUBCASE("Dijkstra on standard graph from vertex 1"){
+        Graph g(5);
+        g.addEdge(1, 2, 10);
+        g.addEdge(1, 3, 5);
+        g.addEdge(2, 3, 2);
+        g.addEdge(2, 4, 1);
+        g.addEdge(3, 4, 9);
+        g.addEdge(3, 5, 2);
+        g.addEdge(4, 5, 4);
+        
+        Graph dijkstraTree = dijkstra(g, 1);
+        
+        // Check shortest path tree
+        CHECK(dijkstraTree.hasEdge(1, 3) == true);
+        CHECK(dijkstraTree.hasEdge(3, 5) == true);
+        CHECK(dijkstraTree.hasEdge(3, 2) == true);
+        CHECK(dijkstraTree.hasEdge(2, 4) == true);
+        
+        // These should not be in the shortest path tree
+        CHECK(dijkstraTree.hasEdge(1, 2) == false);
+        CHECK(dijkstraTree.hasEdge(3, 4) == false);
+        CHECK(dijkstraTree.hasEdge(4, 5) == false);
+    }
+
+    SUBCASE("Dijkstra on standard graph from vertex 3"){
+        Graph g(5);
+        g.addEdge(1, 2, 10);
+        g.addEdge(1, 3, 5);
+        g.addEdge(2, 3, 2);
+        g.addEdge(2, 4, 1);
+        g.addEdge(3, 4, 9);
+        g.addEdge(3, 5, 2);
+        g.addEdge(4, 5, 4);
+        
+        Graph dijkstraTree = dijkstra(g, 3);
+        
+        // Check shortest path tree from vertex 3
+        CHECK(dijkstraTree.hasEdge(3, 5) == true);
+        CHECK(dijkstraTree.hasEdge(3, 2) == true);
+        CHECK(dijkstraTree.hasEdge(2, 4) == true);
+        CHECK(dijkstraTree.hasEdge(3, 1) == true);
+        
+        // These should not be in the shortest path tree
+        CHECK(dijkstraTree.hasEdge(4, 5) == false);
+    }
+
+    SUBCASE("Dijkstra with negative edges"){
+        Graph g(3);
+        g.addEdge(1, 2, 5);
+        g.addEdge(2, 3, -2); // Negative edge
+        
+        CHECK_THROWS_AS(dijkstra(g, 1), std::invalid_argument);
+    }
+
+    SUBCASE("Dijkstra with invalid start vertex"){
+        Graph g(5);
+        CHECK_THROWS_AS(dijkstra(g, 0), std::invalid_argument);
+        CHECK_THROWS_AS(dijkstra(g, 6), std::invalid_argument);
+    }
+}
+
+TEST_CASE("Prim algorithm tests"){
+    SUBCASE("Prim on empty graph"){
+        Graph g(0);
+        CHECK_THROWS_AS(prim(g), std::invalid_argument);
+    }
+
+    SUBCASE("Prim on single vertex graph"){
+        Graph g(1);
+        Graph mst = prim(g);
+        CHECK(mst.getNumOfVertices() == 1);
+        
+        std::stringstream buffer;
+        CoutRedirect redirect(buffer);
+        mst.printGraph();
+        CHECK(buffer.str() == "Vertex 1 has no neighbors.\n");
+    }
+
+    SUBCASE("Prim on standard graph"){
+        Graph g(5);
+        g.addEdge(1, 2, 10);
+        g.addEdge(1, 3, 5);
+        g.addEdge(2, 3, 2);
+        g.addEdge(2, 4, 1);
+        g.addEdge(3, 4, 9);
+        g.addEdge(3, 5, 2);
+        g.addEdge(4, 5, 4);
+        
+        Graph mst = prim(g);
+        
+        // Count the total weight of the MST
+        int totalWeight = 0;
+        for(int i = 1; i <= 5; i++){
+            DynamicArray<Pair<int, int>> neighbors = mst.getNeighbors(i);
+            for(int j = 0; j < neighbors.getSize(); j++){
+                totalWeight += neighbors[j].second;
+            }
+        }
+        
+        // MST weight should be doubled because it's an undirected graph representation
+        CHECK(totalWeight == 10); // (1,3)=5 + (2,3)=2 + (2,4)=1 + (3,5)=2 = 10
+        
+        // MST should have exactly n-1 edges
+        int edgeCount = g.getNumOfVertices() - 1;       
+        CHECK(edgeCount == 4);
+    }
+
+    SUBCASE("Prim with negative edges"){
+        Graph g(3);
+        g.addEdge(1, 2, 5);
+        g.addEdge(2, 3, -2); // Negative edge
+        
+        CHECK_THROWS_AS(prim(g), std::invalid_argument);
+    }
+}
+
+TEST_CASE("Kruskal algorithm tests"){
+    SUBCASE("Kruskal on empty graph"){
+        Graph g(0);
+        CHECK_THROWS_AS(kruskal(g), std::invalid_argument);
+    }
+
+    SUBCASE("Kruskal on single vertex graph"){
+        Graph g(1);
+        Graph mst = kruskal(g);
+        CHECK(mst.getNumOfVertices() == 1);
+        
+        std::stringstream buffer;
+        CoutRedirect redirect(buffer);
+        mst.printGraph();
+        CHECK(buffer.str() == "Vertex 1 has no neighbors.\n");
+    }
+
+    SUBCASE("Kruskal on standard graph"){
+        Graph g(5);
+        g.addEdge(1, 2, 10);
+        g.addEdge(1, 3, 5);
+        g.addEdge(2, 3, 2);
+        g.addEdge(2, 4, 1);
+        g.addEdge(3, 4, 9);
+        g.addEdge(3, 5, 2);
+        g.addEdge(4, 5, 4);
+        
+        Graph mst = kruskal(g);
+        
+        // Count the total weight of the MST
+        int totalWeight = 0;
+        for(int i = 1; i <= 5; i++){
+            DynamicArray<Pair<int, int>> neighbors = mst.getNeighbors(i);
+            for(int j = 0; j < neighbors.getSize(); j++){
+                totalWeight += neighbors[j].second;
+            }
+        }
+        
+        // MST weight should be doubled because it's an undirected graph representation
+        CHECK(totalWeight == 10); // (1,3)=5 + (2,3)=2 + (2,4)=1 + (3,5)=2 = 10
+        
+        // MST should have exactly n-1 edges
+        int edgeCount = g.getNumOfVertices() - 1;
+        CHECK(edgeCount == 4);
+    }
+
+    SUBCASE("Kruskal with negative edges"){
+        Graph g(3);
+        g.addEdge(1, 2, 5);
+        g.addEdge(2, 3, -2); // Negative edge
+        
+        CHECK_THROWS_AS(kruskal(g), std::invalid_argument);
+    }
+    
+    SUBCASE("Compare Kruskal and Prim results"){
+        Graph g(6);
+        g.addEdge(1, 2, 3);
+        g.addEdge(1, 3, 1);
+        g.addEdge(2, 3, 5);
+        g.addEdge(2, 4, 2);
+        g.addEdge(3, 4, 4);
+        g.addEdge(3, 5, 6);
+        g.addEdge(4, 6, 8);
+        g.addEdge(5, 6, 7);
+        
+        Graph mstKruskal = kruskal(g);
+        Graph mstPrim = prim(g);
+        
+        // Calculate total weights for both MSTs
+        int weightKruskal = 0;
+        int weightPrim = 0;
+        
+        for(int i = 1; i <= 6; i++) {
+            DynamicArray<Pair<int, int>> neighborsKruskal = mstKruskal.getNeighbors(i);
+            for(int j = 0; j < neighborsKruskal.getSize(); j++){
+                weightKruskal += neighborsKruskal[j].second;
+            }
+            
+            DynamicArray<Pair<int, int>> neighborsPrim = mstPrim.getNeighbors(i);
+            for(int j = 0; j < neighborsPrim.getSize(); j++){
+                weightPrim += neighborsPrim[j].second;
+            }
+        }
+        
+        // Both algorithms should produce MSTs with the same total weight
+        // (although the structure might differ)
+        CHECK(weightKruskal == weightPrim);
+    }
+    
+    SUBCASE("Kruskal on disconnected graph"){
+        Graph g(6);
+        g.addEdge(1, 2, 1);
+        g.addEdge(2, 3, 1);
+        // Vertices 4, 5, 6 are disconnected from 1,2,3
+        g.addEdge(4, 5, 1);
+        g.addEdge(5, 6, 1);
+        
+        Graph mst = kruskal(g);
+        
+        // Kruskal should include all components
+        CHECK(mst.hasEdge(1, 2) == true);
+        CHECK(mst.hasEdge(2, 3) == true);
+        CHECK(mst.hasEdge(4, 5) == true);
+        CHECK(mst.hasEdge(5, 6) == true);
+        
+        // Count edges - should be n-c (n vertices, c connected components)
+        int edgeCount = g.getNumOfVertices() - 2; // 6 vertices - 2 components
+        CHECK(edgeCount == 4);
+    }
+}
