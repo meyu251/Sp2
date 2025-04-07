@@ -15,5 +15,4 @@ namespace graph{
     Graph dijkstra(Graph& g, int startVertex);
     Graph prim(Graph& g);
 
-
 }
