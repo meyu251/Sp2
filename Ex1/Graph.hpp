@@ -22,6 +22,7 @@ namespace graph {
         Graph(int n);
         Graph(const Graph& g);    // copy constructor
         ~Graph();
+        Graph& operator=(const Graph& other);
 
         int getNumOfVertices();
         void addEdge(int src, int dest, int weight);

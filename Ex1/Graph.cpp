@@ -29,6 +29,20 @@ Graph::~Graph(){
     delete[] adjList;
 }
 
+Graph& Graph::operator=(const Graph& other){
+    if(this != &other){
+        delete[] adjList;
+        numOfVertices = other.numOfVertices;
+        adjList = new DynamicArray<Pair<int, int>>[numOfVertices];
+        for(int i = 0; i < numOfVertices; i++){
+            for(int j = 0; j < other.adjList[i].getSize(); j++){
+                adjList[i].push_back(other.adjList[i].get(j));
+            }
+        }
+    }
+    return *this;
+}
+
 int Graph::getNumOfVertices(){
     return numOfVertices;
 }
@@ -186,12 +200,12 @@ void Graph::removeEdge(int src, int dest){
 
 /*
 Print the graph in the following format:
-{vertex1, neighbor (weight)}, {vertex1, neighbor (weight)}, ...
-{vertex2, neighbor (weight)}, {vertex2, neighbor (weight)}, ...
+{vertex1->neighbor (weight)}, {vertex1->neighbor (weight)}, ...
+{vertex2->neighbor (weight)}, {vertex2->neighbor (weight)}, ...
 .
 .
 .
-{vertexN, neighbor (weight)}, {vertexN, neighbor (weight)}, ..
+{vertexN->neighbor (weight)}, {vertexN->neighbor (weight)}, ..
 
 if there are no edeges for a vertex, print "Vertex i has no neighbors."
 */
@@ -207,7 +221,7 @@ void Graph::printGraph(){
         }
 
         for(int j = 0; j < adjList[i].getSize(); j++){
-            std::cout << "{" << i+1 << "," << adjList[i].get(j).first << " (" << adjList[i].get(j).second << ")}";
+            std::cout << "{" << i+1 << "->" << adjList[i].get(j).first << " (" << adjList[i].get(j).second << ")}";
             if(j != adjList[i].getSize() - 1){
                 std::cout << ", ";
             }

@@ -13,44 +13,34 @@ using namespace std;
 namespace graph{
 
 Graph bfs(Graph& g, int root){
-    cout << "1" << endl;
     if(root < 1 || root > g.getNumOfVertices()){
         throw std::invalid_argument("Invalid root.");
     }
 
-    cout << "2" << endl;
     Graph ans(g.getNumOfVertices());
     DynamicArray<bool> visited(g.getNumOfVertices());
     for(int i = 0; i < g.getNumOfVertices(); i++){
-        cout << "2.5" << endl;
         visited.push_back(false);
     }
     Queue<int> q;
 
-    cout << "3" << endl;
     q.enqueue(root);
-    cout << "3.5" << endl;
     visited[root - 1] = true;   // the -1 is becouse the vertex numbered from 1 to n and the array from 0 to n-1
 
-    cout << "4" << endl;
     while(!q.isEmpty()){
         
         int current = q.dequeue();
         DynamicArray<Pair<int, int>> neighbors = g.getNeighbors(current);
-        cout << "5" << endl;
         for(int i = 0; i < neighbors.getSize(); i++){
             int neighbor = neighbors[i].first;
-            cout << "current = " << current << ", neighbor = " << neighbor << ", i = " << i << endl;
             if(!visited[neighbor - 1]){
                 q.enqueue(neighbor);
                 visited[neighbor - 1] = true;
-                cout << "6" << endl;
                 ans.addDirectedEdge(current, neighbor, neighbors[i].second);    // add also the original weight of this edge
             }
         }
     }
 
-    cout << "7" << endl;
     return ans;
 }
 
@@ -61,8 +51,8 @@ Graph dfs(Graph& g, int root){
 
     Graph ans(g.getNumOfVertices());
     DynamicArray<int> visited(g.getNumOfVertices()); // consider 0 as not visited, 1 as visited but not finished, 2 as visited and finished
-    for(int i = 0; i < visited.getSize(); i++){
-        visited[i] = 0;
+    for(int i = 0; i < g.getNumOfVertices(); i++){
+        visited.push_back(0);
     }
     Stack<int> s;
     s.push(root);
@@ -103,10 +93,10 @@ Graph dijkstra(Graph& g, int startVertex){
     DynamicArray<int> dist(g.getNumOfVertices());
     DynamicArray<bool> visited(g.getNumOfVertices());
     DynamicArray<int> parents(g.getNumOfVertices());
-    for(int i = 0; i < dist.getSize(); i++){
-        dist[i] = INT_MAX;
-        visited[i] = false;
-        parents[i] = -1;   // -1 means no parent
+    for(int i = 0; i < g.getNumOfVertices(); i++){
+        dist.push_back(INT_MAX);
+        visited.push_back(false);
+        parents.push_back(-1);   // -1 means no parent
     }
 
     dist[startVertex - 1] = 0;   // the -1 is becouse the vertex numbered from 1 to n and the array from 0 to n-1
@@ -114,8 +104,10 @@ Graph dijkstra(Graph& g, int startVertex){
     pq.enqueue({startVertex, 0});
 
     while(!pq.isEmpty()){
-        Pair<int, int> current = pq.dequeue();
+        Pair<int, int> current = pq.peek();
+        pq.dequeue();
         int currentVertex = current.first;
+        int currentDist = current.second;  
         if(visited[currentVertex - 1]) continue; // already visited
         visited[currentVertex - 1] = true;
 
@@ -123,9 +115,32 @@ Graph dijkstra(Graph& g, int startVertex){
         for(int i = 0; i < neighbors.getSize(); i++){
             int neighbor = neighbors[i].first;
             int weight = neighbors[i].second;
+            
             if(!visited[neighbor - 1] && dist[currentVertex - 1] + weight < dist[neighbor - 1]){
                 dist[neighbor - 1] = dist[currentVertex - 1] + weight;
-                parents[neighbor - 1] = currentVertex;   // set the parent of the neighbor
+                parents[neighbor - 1] = currentVertex;
+                pq.enqueue({neighbor, dist[neighbor - 1]});
+            }
+        }
+    }
+    // build the ans graph
+
+    while(!pq.isEmpty()){
+        Pair<int, int> current = pq.peek();
+        pq.dequeue();
+        int currentVertex = current.first;
+        int currentDist = current.second;  
+        if(visited[currentVertex - 1]) continue; // already visited
+        visited[currentVertex - 1] = true;
+
+        DynamicArray<Pair<int, int>> neighbors = g.getNeighbors(currentVertex);
+        for(int i = 0; i < neighbors.getSize(); i++){
+            int neighbor = neighbors[i].first;
+            int weight = neighbors[i].second;
+            
+            if(!visited[neighbor - 1] && dist[currentVertex - 1] + weight < dist[neighbor - 1]){
+                dist[neighbor - 1] = dist[currentVertex - 1] + weight;
+                parents[neighbor - 1] = currentVertex;
                 pq.enqueue({neighbor, dist[neighbor - 1]});
             }
         }
@@ -159,10 +174,10 @@ Graph prim(Graph& g){
     DynamicArray<int> key(g.getNumOfVertices());
     DynamicArray<int> parents(g.getNumOfVertices());
 
-    for(int i = 0; i < inMST.getSize(); i++){
-        inMST[i] = false;
-        key[i] = INT_MAX;
-        parents[i] = -1;
+    for(int i = 0; i < g.getNumOfVertices(); i++){
+        inMST.push_back(false);
+        key.push_back(INT_MAX);
+        parents.push_back(-1);   // -1 means no parent
     }
     
     PriorityQueue<Pair<int, int>> pq; // first = vertex, second = key

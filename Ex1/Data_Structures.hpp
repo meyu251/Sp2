@@ -26,7 +26,9 @@ namespace graph {
 
         DynamicArray();
         DynamicArray(int capacity);
+        DynamicArray(const DynamicArray& other);
         ~DynamicArray();
+        DynamicArray& operator=(const DynamicArray& other);
 
         void push_back(const T& value); // add an element to the end of the array
         void removeAt(int index);
@@ -34,6 +36,7 @@ namespace graph {
         int getSize() const;
         bool isEmpty() const;
         T& operator[](int index);
+        const T& operator[](int index) const;
     };  // class DynamicArray
 
 
@@ -95,13 +98,13 @@ namespace graph {
         bool isEmpty() const;
     };  // class Stack
 
-    ////////////////////////////////////////////
+    //////////////////////////////////////////
     // PriorityQueue
-    ////////////////////////////////////////////
+    //////////////////////////////////////////
     template <typename T>
     class PriorityQueue {
     private:
-        DynamicArray<T> data;
+        DynamicArray<T> heap;
         int size;
 
         void heapifyUp(int index);
@@ -113,11 +116,11 @@ namespace graph {
 
         void enqueue(const T& value);
         T dequeue();
-        T peek();
+        const T& peek() const;
         int getSize() const;
         bool isEmpty() const;
-    };  // class PriorityQueue
-
+        void printHeap() const;
+    };
 
 
 //////////////////////////////////////////
@@ -141,8 +144,28 @@ DynamicArray<T>::DynamicArray(int capacity){
 }
 
 template <typename T>
+DynamicArray<T>::DynamicArray(const DynamicArray& other){
+    capacity = other.capacity;
+    size = other.size;
+    data = new T[capacity];
+    std::copy(other.data, other.data + size, data);
+}
+
+template <typename T>
 DynamicArray<T>::~DynamicArray(){
     delete[] data;
+}
+
+template <typename T>
+DynamicArray<T>& DynamicArray<T>::operator=(const DynamicArray& other){
+    if(this != &other){
+        delete[] data;
+        capacity = other.capacity;
+        size = other.size;
+        data = new T[capacity];
+        std::copy(other.data, other.data + size, data);
+    }
+    return *this;
 }
 
 template <typename T>
@@ -196,6 +219,14 @@ bool DynamicArray<T>::isEmpty() const{
 
 template <typename T>
 T& DynamicArray<T>::operator[](int index){
+    if(index < 0 || index >= size){
+        throw std::out_of_range("Index out of range");
+    }
+    return data[index];
+}
+
+template <typename T>
+const T& DynamicArray<T>::operator[](int index) const{
     if(index < 0 || index >= size){
         throw std::out_of_range("Index out of range");
     }
@@ -329,57 +360,12 @@ bool Stack<T>::isEmpty() const{
 // PriorityQueue
 //////////////////////////////////////////
 template <typename T>
-PriorityQueue<T>::PriorityQueue(){
-    size = 0;
-}
-
-template <typename T>
-PriorityQueue<T>::~PriorityQueue(){}
-
-template <typename T>
-void PriorityQueue<T>::enqueue(const T& value){
-    data.push_back(value);
-    size++;
-    heapifyUp(size - 1);
-}
-
-template <typename T>
-T PriorityQueue<T>::dequeue(){
-    if(size == 0){
-        throw std::out_of_range("PriorityQueue is empty");
-    }
-    T value = data[0];
-    data[0] = data[size - 1];
-    size--;
-    heapifyDown(0);
-    return value;
-}
-
-template <typename T>
-T PriorityQueue<T>::peek(){
-    if(size == 0){
-        throw std::out_of_range("PriorityQueue is empty");
-    }
-    return data[0];
-}
-
-template <typename T>
-int PriorityQueue<T>::getSize() const{
-    return size;
-}
-
-template <typename T>
-bool PriorityQueue<T>::isEmpty() const{
-    return size == 0;
-}
-
-template <typename T>
 void PriorityQueue<T>::heapifyUp(int index){
     while(index > 0){
-        int parentIndex = (index - 1) / 2;
-        if(data[index] < data[parentIndex]){
-            std::swap(data[index], data[parentIndex]);
-            index = parentIndex;
+        int parent = (index - 1) / 2;
+        if(heap[index] < heap[parent]){
+            std::swap(heap[index], heap[parent]);
+            index = parent;
         }
         else{
             break;
@@ -389,24 +375,78 @@ void PriorityQueue<T>::heapifyUp(int index){
 
 template <typename T>
 void PriorityQueue<T>::heapifyDown(int index){
-    while(index < size){
-        int leftChildIndex = 2 * index + 1;
-        int rightChildIndex = 2 * index + 2;
-        int smallestIndex = index;
+    while(true){
+        int left = 2 * index + 1;
+        int right = 2 * index + 2;
+        int smallest = index;
 
-        if(leftChildIndex < size && data[leftChildIndex] < data[smallestIndex]){
-            smallestIndex = leftChildIndex;
+        if(left < size && heap[left] < heap[smallest]){
+            smallest = left;
         }
-        if(rightChildIndex < size && data[rightChildIndex] < data[smallestIndex]){
-            smallestIndex = rightChildIndex;
+        if(right < size && heap[right] < heap[smallest]){
+            smallest = right;
         }
-        if(smallestIndex != index){
-            std::swap(data[index], data[smallestIndex]);
-            index = smallestIndex;
+        if(smallest != index){
+            std::swap(heap[index], heap[smallest]);
+            index = smallest;
         }
         else{
             break;
         }
+    }
+}
+
+template <typename T>
+PriorityQueue<T>::PriorityQueue(){
+    size = 0;
+}
+
+template <typename T>
+PriorityQueue<T>::~PriorityQueue(){}
+
+template <typename T>
+void PriorityQueue<T>::enqueue(const T& value){
+    heap.push_back(value);
+    size++;
+    heapifyUp(size - 1);
+}
+
+template <typename T>
+T PriorityQueue<T>::dequeue(){
+    if(size == 0){
+        throw std::out_of_range("PriorityQueue is empty");
+    }
+    T top = heap[0];
+    heap[0] = heap[size - 1];
+    heap.removeAt(size - 1);
+    size--;
+    if(size > 0){
+        heapifyDown(0);
+    }
+    return top;
+}
+
+template <typename T>
+const T& PriorityQueue<T>::peek() const{
+    if(size == 0){
+        throw std::out_of_range("PriorityQueue is empty");
+    }
+    return heap[0];
+}
+
+template <typename T>
+int PriorityQueue<T>::getSize() const {return size;}
+template <typename T>
+bool PriorityQueue<T>::isEmpty() const{return size == 0;}
+
+template <typename T>
+void PriorityQueue<T>::printHeap() const{
+    if(size == 0){
+        std::cout << "Heap is empty" << std::endl;
+        return;
+    }
+    for(int i = 0; i < size; i++){
+        std::cout << "at index " << i << ": " << heap[i].first << ", " << heap[i].second << std::endl;
     }
 }
 
