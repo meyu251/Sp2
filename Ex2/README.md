@@ -1,8 +1,7 @@
 # SquareMat - Square Matrix Operations Library
 
 ## Author
-- **Name:** Meir Yust
-- **Email:** meyu251@gmail.com
+- Meir Yust (meyu251@gmail.com)
 
 ## Overview
 This library provides a comprehensive C++ implementation of a square matrix class (`SquareMat`) with an extensive set of operator overloads for mathematical operations. It enables intuitive manipulation of square matrices using standard mathematical operators.
